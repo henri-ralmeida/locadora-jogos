@@ -1,10 +1,10 @@
-package br.com.retro.locadarorajogos;
+package br.com.retro.locadorajogos;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LocadarorajogosApplicationTests {
+class LocadoraJogosApplicationTests {
 
 	@Test
 	void contextLoads() {

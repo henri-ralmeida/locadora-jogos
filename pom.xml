@@ -11,7 +11,7 @@
 	<groupId>br.com.retro</groupId>
 	<artifactId>locadarorajogos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>locadarorajogos</name>
+	<name>locadorajogos</name>
 	<description>API para Locadora de Jogos</description>
 	<url/>
 	<licenses>
