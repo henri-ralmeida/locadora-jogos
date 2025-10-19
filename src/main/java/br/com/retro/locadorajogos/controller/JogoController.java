@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/jogos")
@@ -21,8 +24,12 @@ public class JogoController {
     private final JogoService jogoService;
 
     @PostMapping
-    public ResponseEntity<JogoDTO> cadastrar(@RequestBody @Valid JogoDTO dto) {
-        return ResponseEntity.ok(jogoService.criarJogo(dto));
+    public ResponseEntity<JogoDTO> cadastrar(@RequestBody @Valid JogoDTO dto, UriComponentsBuilder uriBuilder) {
+        JogoDTO jogoCriado = jogoService.criarJogo(dto);
+
+        URI endereco = uriBuilder.path("/jogos/{id}").buildAndExpand(jogoCriado.getId()).toUri();
+
+        return ResponseEntity.created(endereco).body(jogoCriado);
     }
 
     @GetMapping
@@ -31,18 +38,19 @@ public class JogoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JogoDTO> buscaPorId(@PathVariable Long id){
+    public ResponseEntity<JogoDTO> buscaPorId(@PathVariable Long id) {
         return ResponseEntity.ok(jogoService.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<JogoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid JogoDTO dto){
+    public ResponseEntity<JogoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid JogoDTO dto) {
         return ResponseEntity.ok(jogoService.atualizarJogo(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         jogoService.deletarJogo(id);
+
         return ResponseEntity.noContent().build();
     }
 }
