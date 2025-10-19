@@ -3,14 +3,16 @@ package br.com.retro.locadorajogos.service;
 import br.com.retro.locadorajogos.domain.Jogo;
 import br.com.retro.locadorajogos.dto.JogoDTO;
 import br.com.retro.locadorajogos.repository.JogoRepository;
+
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +27,10 @@ public class JogoService {
         return modelMapper.map(jogo, JogoDTO.class);
     }
 
-    public List<JogoDTO> buscarTodos() {
-        return jogoRepository.findAll().stream().map(
-                j -> modelMapper.map(j, JogoDTO.class)).toList();
+    public Page<JogoDTO> buscarTodos(Pageable paginacao) {
+        return jogoRepository.
+                findAll(paginacao)
+                .map(j -> modelMapper.map(j, JogoDTO.class));
     }
 
     public JogoDTO buscarPorId(Long id) {

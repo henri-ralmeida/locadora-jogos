@@ -2,13 +2,16 @@ package br.com.retro.locadorajogos.controller;
 
 import br.com.retro.locadorajogos.dto.JogoDTO;
 import br.com.retro.locadorajogos.service.JogoService;
+
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/jogos")
@@ -18,27 +21,28 @@ public class JogoController {
     private final JogoService jogoService;
 
     @PostMapping
-    public void cadastrar(@RequestBody @Valid JogoDTO dto) {
-        jogoService.criarJogo(dto);
+    public ResponseEntity<JogoDTO> cadastrar(@RequestBody @Valid JogoDTO dto) {
+        return ResponseEntity.ok(jogoService.criarJogo(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<JogoDTO>> buscarTodos() {
-        return ResponseEntity.ok(jogoService.buscarTodos());
+    public ResponseEntity<Page<JogoDTO>> buscarTodos(@PageableDefault(size = 10) Pageable paginacao) {
+        return ResponseEntity.ok(jogoService.buscarTodos(paginacao));
     }
 
     @GetMapping("/{id}")
-    public JogoDTO buscaPorId(@PathVariable Long id){
-        return jogoService.buscarPorId(id);
+    public ResponseEntity<JogoDTO> buscaPorId(@PathVariable Long id){
+        return ResponseEntity.ok(jogoService.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
-    public JogoDTO atualizar(@PathVariable Long id, @RequestBody @Valid JogoDTO dto){
-        return jogoService.atualizarJogo(id, dto);
+    public ResponseEntity<JogoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid JogoDTO dto){
+        return ResponseEntity.ok(jogoService.atualizarJogo(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id){
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         jogoService.deletarJogo(id);
+        return ResponseEntity.noContent().build();
     }
 }
