@@ -3,6 +3,7 @@ package br.com.retro.locadorajogos.controller;
 import br.com.retro.locadorajogos.dto.JogoDTO;
 import br.com.retro.locadorajogos.service.JogoService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("/jogos")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class JogoController {
 
     private final JogoService jogoService;

@@ -4,6 +4,7 @@ import br.com.retro.locadorajogos.domain.Usuario;
 import br.com.retro.locadorajogos.dto.UsuarioDTO;
 import br.com.retro.locadorajogos.security.service.TokenService;
 import br.com.retro.locadorajogos.service.UsuarioService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class AutenticacaoController {
         return ResponseEntity.ok(tokenService.criarToken((Usuario) autenticacao.getPrincipal()));
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping("/usuarios")
     public ResponseEntity<UsuarioDTO> criacaoUsuario(@RequestBody @Valid UsuarioDTO credenciais, UriComponentsBuilder uriBuilder) {
         UsuarioDTO usuarioCriado = usuarioService.criarUsuario(credenciais);
