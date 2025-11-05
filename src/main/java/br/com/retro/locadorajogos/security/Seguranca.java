@@ -28,7 +28,11 @@ public class Seguranca {
     public SecurityFilterChain filtroSeguranca(HttpSecurity http) throws Exception {
         http.csrf(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-iu.html").permitAll()
+                        .requestMatchers("/swagger-iu/**").permitAll()
                         .anyRequest().authenticated())
                         .addFilterBefore(filtro, UsernamePasswordAuthenticationFilter.class);
 
