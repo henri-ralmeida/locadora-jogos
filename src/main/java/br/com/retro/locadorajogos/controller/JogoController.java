@@ -24,8 +24,8 @@ public class JogoController {
     private final JogoService jogoService;
 
     @PostMapping
-    public ResponseEntity<JogoDTO> cadastrar(@RequestBody @Valid JogoDTO dto, UriComponentsBuilder uriBuilder) {
-        JogoDTO jogoCriado = jogoService.criarJogo(dto);
+    public ResponseEntity<JogoDTO> cadastrar(@RequestBody @Valid JogoDTO jogo, UriComponentsBuilder uriBuilder) {
+        JogoDTO jogoCriado = jogoService.criarJogo(jogo);
 
         URI endereco = uriBuilder.path("/jogos/{id}").buildAndExpand(jogoCriado.getId()).toUri();
 
