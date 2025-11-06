@@ -2,6 +2,7 @@ package br.com.retro.locadorajogos.service;
 
 import br.com.retro.locadorajogos.domain.Usuario;
 import br.com.retro.locadorajogos.dto.UsuarioDTO;
+import br.com.retro.locadorajogos.exception.UsernameAlreadyExistsException;
 import br.com.retro.locadorajogos.repository.UsuarioRepository;
 import br.com.retro.locadorajogos.security.CriptografiaSenha;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,17 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public UsuarioDTO criarUsuario(UsuarioDTO credenciais) {
+        // Verifica se o usuário já existe
+        if (repository.existsByUsername(credenciais.getUsername())) {
+            throw new UsernameAlreadyExistsException("Usuário já existente");
+        }
+        
         Usuario usuario = modelMapper.map(credenciais, Usuario.class);
-
         String senhaCriptografada = CriptografiaSenha.criptografia(usuario.getPassword());
         usuario.setPassword(senhaCriptografada);
 
-        repository.save(usuario);
+        Usuario usuarioSalvo = repository.save(usuario);
         
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return modelMapper.map(usuarioSalvo, UsuarioDTO.class);
     }
 }
