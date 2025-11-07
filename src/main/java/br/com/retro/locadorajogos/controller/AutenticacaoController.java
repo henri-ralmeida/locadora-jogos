@@ -1,73 +1,55 @@
 package br.com.retro.locadorajogos.controller;
 
-import br.com.retro.locadorajogos.domain.Usuario;
 import br.com.retro.locadorajogos.dto.UsuarioDTO;
-import br.com.retro.locadorajogos.security.service.TokenService;
+import br.com.retro.locadorajogos.service.AutenticacaoService;
 import br.com.retro.locadorajogos.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
-@Tag(name = "Autenticacao Locadora", description = "Endpoints para gerenciamento de Usuários")
+@Tag(name = "Autenticação Locadora", description = "Endpoints para login e criação de usuários")
 @RestController
 @RequestMapping("/login")
 @RequiredArgsConstructor
 public class AutenticacaoController {
 
-    private final AuthenticationManager autenticador;
+    private final AutenticacaoService autenticacaoService;
     private final UsuarioService usuarioService;
-    private final TokenService tokenService;
 
-    @Operation(summary = "Autentica um Usuário")
-    @SecurityRequirement(name = "bearer-key")
+    @Operation(summary = "Autentica um usuário", description = "Realiza o login do usuário e retorna um token JWT de autenticação.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Senha incorreta"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @PostMapping
-    public ResponseEntity<Object> validacaoUsuario(@RequestBody @Valid UsuarioDTO credenciais) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                credenciais.getUsername(), credenciais.getPassword());
-
-        Authentication autenticacao = autenticador.authenticate(token);
-
-        return ResponseEntity.ok(tokenService.criarToken((Usuario) autenticacao.getPrincipal()));
+    public ResponseEntity<Object> login(@RequestBody @Valid UsuarioDTO credenciais) {
+        String token = autenticacaoService.autenticar(credenciais);
+        return ResponseEntity.ok(token);
     }
 
-    @Operation(summary = "Cria um novo Usuário")
+    @Operation(summary = "Cria um novo usuário", description = "Registra um novo usuário no sistema de locadora de jogos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
+            @ApiResponse(responseCode = "409", description = "Usuário já existente")
+    })
     @PostMapping("/usuarios")
-    public ResponseEntity<Map<String, Object>> criacaoUsuario(
-            @RequestBody @Valid UsuarioDTO credenciais, 
-            UriComponentsBuilder uriBuilder) {
-        
+    public ResponseEntity<UsuarioDTO> criarUsuario(@RequestBody @Valid UsuarioDTO credenciais,
+                                                   UriComponentsBuilder uriBuilder) {
+
         UsuarioDTO usuarioCriado = usuarioService.criarUsuario(credenciais);
+        URI endereco = uriBuilder.path("/usuarios/{id}")
+                .buildAndExpand(usuarioCriado.getId())
+                .toUri();
 
-        Authentication authentication = autenticador.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                credenciais.getUsername(), 
-                credenciais.getPassword()
-            )
-        );
-
-        String token = tokenService.criarToken((Usuario) authentication.getPrincipal());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("usuario", usuarioCriado);
-        response.put("token", token);
-        
-        URI endereco = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuarioCriado.getId()).toUri();
-        
-        return ResponseEntity.created(endereco).body(response);
+        return ResponseEntity.created(endereco).body(usuarioCriado);
     }
 }

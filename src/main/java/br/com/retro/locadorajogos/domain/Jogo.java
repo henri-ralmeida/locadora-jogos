@@ -12,13 +12,13 @@ public class Jogo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String jogo;
+    private String nomeJogo;
     private Double preco;
     @Enumerated(EnumType.STRING)
     private GeneroJogo generoJogo;
     @Enumerated(EnumType.STRING)
     private TipoMidia tipoMidia;
-    private Boolean disponivel;
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
+    private Boolean disponivel;
 }

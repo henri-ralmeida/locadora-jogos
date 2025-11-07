@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(
     code = HttpStatus.CONFLICT,
-    reason = "Username already exists"
+    reason = "Usuário já existente"
 )
-public class UsernameAlreadyExistsException extends RuntimeException {
-    public UsernameAlreadyExistsException(String message) {
+public class UsuarioJaExisteException extends RuntimeException {
+    public UsuarioJaExisteException(String message) {
         super(message);
     }
 }
