@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS jogo (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nome_jogo VARCHAR(255) NOT NULL,
+    preco DOUBLE PRECISION NOT NULL,
+    genero_jogo VARCHAR(50) NOT NULL,
+    tipo_midia VARCHAR(50) NOT NULL,
+    disponivel BOOLEAN NOT NULL,
+
+    PRIMARY KEY(id)
+);
