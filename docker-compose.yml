@@ -1,0 +1,53 @@
+# Docker Compose para desenvolvimento local
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: locadora-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: locadora_db
+      MYSQL_USER: locadora
+      MYSQL_PASSWORD: locadora123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - locadora-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: locadora-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/locadora_db
+      SPRING_DATASOURCE_USERNAME: locadora
+      SPRING_DATASOURCE_PASSWORD: locadora123
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SPRING_JPA_SHOW_SQL: false
+      SPRING_FLYWAY_ENABLED: true
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - locadora-network
+
+volumes:
+  mysql_data:
+
+networks:
+  locadora-network:
+    driver: bridge

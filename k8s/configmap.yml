@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: locadora-config
+  namespace: default
+data:
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service:3306/locadora_db"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MySQL8Dialect"
+  SPRING_JPA_SHOW_SQL: "false"
+  SPRING_FLYWAY_ENABLED: "true"
+  SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
