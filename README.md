@@ -145,5 +145,5 @@ Não há dependência do Actuator no `pom.xml`; por isso este README não aprese
 
 ## Licença
 
-O repositório ainda não contém um arquivo de licença.
+Este projeto está licenciado sob a [Apache License 2.0](LICENSE).
 
